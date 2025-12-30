@@ -1,49 +1,57 @@
-# set compiler
-set(CMAKE_CXX_COMPILER arm-none-linux-gnueabihf-g++)
-set(CMAKE_C_COMPILER arm-none-linux-gnueabihf-gcc)
+cmake_minimum_required(VERSION 3.5)
+project(example C CXX)
 
+# ===== クロスコンパイル =====
+set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
+
+# ===== Build type =====
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
-SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
-# project name
-PROJECT(example)
-# requirement of cmake version
-cmake_minimum_required(VERSION 3.5)
+set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -Wall -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
 
-# set the directory of executable files
+# ===== 出力 =====
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(OpenCV_DIR <YOUR OPENCV DIR>)
 
-# find required opencv
+# ===== OpenCV =====
+set(OpenCV_DIR "/workspaces/opencv/build-armhf/install/lib/cmake/opencv4")
 find_package(OpenCV REQUIRED)
-# directory of opencv headers
-include_directories(${OpenCV_INCLUDE_DIRS})
-# name of executable file and path of source file
-add_executable(example main/<YOUR TARGET>.cpp)
-# directory of opencv library
-link_directories(${OpenCV_LIBRARY_DIRS})
-# opencv libraries
-target_link_libraries(example ${OpenCV_LIBS})
 
-# includes
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include/ncnn)
-target_link_libraries (example ${PROJECT_SOURCE_DIR}/lib/libncnn.a -fopenmp)
+# ===== ncnn =====
+set(NCNN_ROOT "/workspaces/ncnn/build-armhf/install")
+set(NCNN_INCLUDE_DIR ${NCNN_ROOT}/include/ncnn)
+set(NCNN_LIB ${NCNN_ROOT}/lib/libncnn.a)
 
-# .so link
-target_link_libraries (example ${PROJECT_SOURCE_DIR}/lib/libzbar.so)
+include_directories(${NCNN_INCLUDE_DIR})
 
-FILE(GLOB_RECURSE PRJ_SRC
-        "${PROJECT_SOURCE_DIR}/src/*.c"
-        "${PROJECT_SOURCE_DIR}/src/*.cpp"
-        )
+# ===== include paths =====
+include_directories(
+    ${OpenCV_INCLUDE_DIRS}
+    ${NCNN_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/include
+)
 
-add_library(mainlib ${PRJ_SRC})
+# ===== Framework sources =====
+file(GLOB_RECURSE FRAMEWORK_SRC
+    "${PROJECT_SOURCE_DIR}/src/*.cpp"
+)
 
-target_link_libraries (mainlib ${PROJECT_SOURCE_DIR}/lib/libncnn.a -fopenmp)
+add_library(mainlib ${FRAMEWORK_SRC})
 
-target_link_libraries(example mainlib)
+target_link_libraries(mainlib
+    ${NCNN_LIB}
+    -fopenmp
+)
+
+# ===== main =====
+add_executable(example
+    ${PROJECT_SOURCE_DIR}/test/main.cpp
+)
+
+target_link_libraries(example
+    mainlib
+    ${OpenCV_LIBS}
+)

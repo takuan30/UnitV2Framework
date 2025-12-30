@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "UnitV2Framework",
+			"path": "."
+		},
+		{
+			"name": "opencv",
+			"path": "../opencv"
+		}
+	],
+	"settings": {}
+}

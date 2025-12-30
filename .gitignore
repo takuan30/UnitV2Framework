@@ -1,0 +1,11 @@
+# build artifacts
+build/
+bin/
+buildの手順.txt
+test
+CMakeListbk1.txt
+CMakeListsncnn版.txt
+
+# editor / os
+.vscode/
+.DS_Store
