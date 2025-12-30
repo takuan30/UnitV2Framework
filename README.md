@@ -92,3 +92,9 @@ UnitV2Framework/
 
 The primary source code for the example application is located in `test/main.cpp`.  
 CMake automatically compiles this file into the `bin/example` executable.
+
+License
+MIT License
+---
+Author
+Yasuhiro Kajiyama
