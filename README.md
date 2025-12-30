@@ -36,3 +36,4 @@ ZBAR
 ```sh
 ./configure --prefix=$(pwd)/build --host=arm-none-linux-gnueabihf --enable-shared --without-gtk --without-python --without-qt --without-imagemagick --disable-video CC=arm-none-linux-gnueabihf-gcc CXX=arm-none-linux-gnueabihf-g++
 ```
+# UnitV2Framework
