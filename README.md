@@ -30,6 +30,7 @@ Target platform:
 
 This diagram shows the relationship between the **Mac host** and the **Devcontainer Linux environment** used for building M5Stack UnitV2 binaries.
 
+<pre>
 Mac Host (arm64)
 ┌─────────────────────────────┐
 │ /usr/bin                     │  ← Mac system binaries
@@ -48,6 +49,7 @@ Devcontainer Linux (aarch64)
 │    └── gcc (for aarch64 Linux) │
 │ /workspaces/UnitV2Framework    │  ← Project workspace
 └─────────────────────────────┘
+</pre>
 **Notes:**
 
 - The Devcontainer is a **Linux environment isolated from the Mac host**, even though it runs on the Mac.  
