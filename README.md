@@ -97,7 +97,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-linux-gnueabihf.toolchain.cmake \
       -DBUILD_LIST=tracking,imgcodecs,videoio,highgui,features2d,ml,xfeatures2d \
       -DCMAKE_BUILD_TYPE=Release \
       ..
-      ```
+```
 
 ### Host
 - Docker
