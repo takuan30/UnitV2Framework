@@ -35,20 +35,22 @@ Mac Host (arm64)
 ┌─────────────────────────────┐
 │ /usr/bin                     │  ← Mac system binaries
 │    ├── gcc (for arm64 Mac)  │
-│    └── …                  │
-│ /Users/kj/…                │  ← Home directory
+│    └── ...                   │
+│ /Users/kj/...                │  ← Home directory
 └─────────────────────────────┘
-│
-│ Docker / Devcontainer
-▼
+    │
+    │ Docker / Devcontainer
+    ▼
 Devcontainer Linux (aarch64)
-┌─────────────────────────────┐
-│ /usr/bin                     │  ← Linux binaries inside the Devcontainer
-│    ├── arm-linux-gnueabihf-gcc │  ← Cross compiler for 32-bit ARM (M5Stack)
-│    ├── arm-linux-gnueabihf-g++ │
-│    └── gcc (for aarch64 Linux) │
-│ /workspaces/UnitV2Framework    │  ← Project workspace
-└─────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ /usr/bin                                 │  ← Linux binaries inside Devcontainer
+│    ├── arm-linux-gnueabihf-gcc          │  ← Cross compiler for 32-bit ARM (M5Stack)
+│    ├── arm-linux-gnueabihf-g++          │
+│    └── gcc (for aarch64 Linux)          │
+│ /workspaces/UnitV2Framework             │  ← Project workspace
+│ /workspaces/opencv                       │  ← OpenCV source
+│ /workspaces/opencv/build                 │  ← Built OpenCV libraries
+└─────────────────────────────────────────┘
 </pre>
 **Notes:**
 
@@ -56,7 +58,7 @@ Devcontainer Linux (aarch64)
 - Cross-compilation for M5Stack UnitV2 is performed inside the Devcontainer using `arm-linux-gnueabihf-gcc` and `g++`.  
 - Mac binaries (like `/usr/bin/gcc` for arm64) **cannot be used directly** for building 32-bit ARM Linux targets.  
 
-## Requirements
+
 
 ### ARM Cross Toolchain
 
@@ -72,6 +74,30 @@ Install on Ubuntu/Debian systems with:
 ```bash
 sudo apt-get update
 sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+```
+### OpenCV for M5Stack UnitV2
+
+This project depends on **OpenCV 4.4.0** with selected extra modules.  
+The following explains how to build and link OpenCV for the 32-bit ARM target.
+
+#### 1. Download OpenCV and Extra Modules
+```bash
+# OpenCV 
+git clone -b 4.4.0 https://github.com/opencv/opencv.git
+# Extra modules (contrib)
+git clone -b 4.4.0 https://github.com/opencv/opencv_contrib.git
+```
+#### 2.Create a Build Directory and Configure CMake
+```bash
+cd opencv
+mkdir build && cd build
+
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/arm-linux-gnueabihf.toolchain.cmake \
+      -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+      -DBUILD_LIST=tracking,imgcodecs,videoio,highgui,features2d,ml,xfeatures2d \
+      -DCMAKE_BUILD_TYPE=Release \
+      ..
+      ```
 
 ### Host
 - Docker
@@ -98,8 +124,10 @@ After installation, the compilers are usually located at:
 /usr/bin/arm-linux-gnueabihf-g++
 
 You can verify the path with:
+```bash
 which arm-linux-gnueabihf-gcc
 which arm-linux-gnueabihf-g++
+```
 ---
 
 ## Build
@@ -109,6 +137,7 @@ mkdir -p build
 cd build
 cmake ..
 make
+```
 
 The main program source file is located at test/main.cpp.
 The resulting executable will be generated in bin/example.
@@ -122,26 +151,16 @@ mkdir -p build
 cd build
 cmake ..
 make
+```
 
----
-
-```md
 ## Project Structure
 
-UnitV2Framework/
-├── bin/                  # Output executables
-├── build/                # Build directory (not tracked)
-├── test/
-│   └── main.cpp          # Main program source
-├── platforms/
-│   └── arm-toolchain.cmake
-├── src/
-│   └── ...               # Other source files
-├── CMakeLists.txt
-├── .devcontainer/
-│   ├── Dockerfile
-│   └── devcontainer.json
-└── README.md
+/workspaces/
+├── UnitV2Framework/           # M5Stack UnitV2 project
+├── ncnn/                       # NCNN library
+├── opencv/                      # OpenCV main source
+└── opencv_contrib/              # OpenCV extra modules
+
 
 The primary source code for the example application is located in `test/main.cpp`.  
 CMake automatically compiles this file into the `bin/example` executable.
