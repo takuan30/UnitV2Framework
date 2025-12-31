@@ -154,13 +154,13 @@ make
 ```
 
 ## Project Structure
-
+<pre>
 /workspaces/
 ├── UnitV2Framework/           # M5Stack UnitV2 project
 ├── ncnn/                       # NCNN library
 ├── opencv/                      # OpenCV main source
 └── opencv_contrib/              # OpenCV extra modules
-
+</pre>
 
 The primary source code for the example application is located in `test/main.cpp`.  
 CMake automatically compiles this file into the `bin/example` executable.
